@@ -29,14 +29,15 @@ from .chase_sql import chase_constants
 # Assume that `BQ_PROJECT_ID` is set in the environment. See the
 # `data_agent` README for more details.
 project = os.getenv("BQ_PROJECT_ID", None)
-region = os.getenv("GOOGLE_CLOUD_REGION", "us-central1")
-llm_client = Client(vertexai=True, project=project, location=region)
+location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+llm_client = Client(vertexai=True, project=project, location=location)
 
 MAX_NUM_ROWS = 80
 
 
 database_settings = None
 bq_client = None
+
 
 def get_bq_client():
     """Get BigQuery client."""
@@ -189,7 +190,7 @@ The database structure is defined by the following table schemas (possibly with 
     )
 
     response = llm_client.models.generate_content(
-        model="gemini-2.0-flash-exp",
+        model=os.getenv("BASELINE_NL2SQL_MODEL"),
         contents=prompt,
         config={"temperature": 0.1},
     )

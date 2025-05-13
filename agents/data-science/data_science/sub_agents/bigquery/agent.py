@@ -15,14 +15,14 @@
 """Database Agent: get data from database (BigQuery) using NL2SQL."""
 
 import os
-from google.genai import types
 
 from google.adk.agents import Agent
 from google.adk.agents.callback_context import CallbackContext
+from google.genai import types
 
-from .prompts import return_instructions_bigquery
 from . import tools
 from .chase_sql import chase_db_tools
+from .prompts import return_instructions_bigquery
 
 NL2SQL_METHOD = os.getenv("NL2SQL_METHOD", "BASELINE")
 
@@ -31,11 +31,12 @@ def setup_before_agent_call(callback_context: CallbackContext) -> None:
     """Setup the agent."""
 
     if "database_settings" not in callback_context.state:
-        callback_context.state["database_settings"] = tools.get_database_settings()
+        callback_context.state["database_settings"] = \
+            tools.get_database_settings()
 
 
 database_agent = Agent(
-    model="gemini-2.0-flash-exp",
+    model=os.getenv("BIGQUERY_AGENT_MODEL"),
     name="database_agent",
     instruction=return_instructions_bigquery(),
     tools=[
